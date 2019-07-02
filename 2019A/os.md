@@ -646,7 +646,7 @@ void philosopher(int i) {
 }
 // 没有死锁的version
 semphore fork[5]={1};
-semphore room=5;
+semphore room=4;
 int i;
 void philosopher(int i) {
     while (true) {
