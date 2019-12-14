@@ -227,7 +227,7 @@
 1. 实体用tuple表示，实体集用{tuple}
 2. binary relationship（二元关系）
    - involve two entity sets (or degree two)
-3. Domain（域） – the set of permitted values for each attribute 
+3. Domain（域） – the set of permitted values for each attribute
    - Attribute types:
      - Simple and composite attributes.
      - Single-valued and multivalued attributes
@@ -246,7 +246,7 @@
    - The functional dependency(函数依赖) $\\ \alpha \rightarrow \beta \\ $holds on（成立） R if and only if for any legal relations r(R), whenever any two tuples $t_1$ and $t_2$ of r agree on the attributes $\alpha$, they also agree on the attributes $\beta$.  That is,$t1[\alpha]=t2[\alpha] \rightarrow t1[\beta]=t2[\beta]$
    - trivial（平凡的）
      - $ID\rightarrow ID$
-     - In general, $\alpha\rightarrow\beta$ is trivial if $\beta\subseteq \alpha$ 
+     - In general, $\alpha\rightarrow\beta$ is trivial if $\beta\subseteq \alpha$
 3. Armstrong’s Axioms:
    - if $\beta \subseteq \alpha$ then $\alpha \rightarrow \beta$ (reflexivity，自反律)
    - if $\alpha \rightarrow \beta$ then $\gamma \alpha \rightarrow \gamma \beta$ (augmentation，增广律)
@@ -255,3 +255,70 @@
    - If $\alpha \rightarrow \beta$ holds and $\alpha \rightarrow \gamma$ holds,  then $\alpha \rightarrow \beta \gamma$ holds (union,合并律)
    - If $\alpha \rightarrow \beta \gamma$ holds, then $\alpha \rightarrow \beta$  holds and $\alpha \rightarrow \gamma$ holds (decomposition，分解律)
    - If $\alpha \rightarrow \beta$ holds and $\beta \gamma \rightarrow \sigma$ holds, then $\alpha \gamma \rightarrow \sigma$ holds (pseudotransitivity，伪传递律)
+5. BCNF: BC范式,对于模式R中所有的函数依赖
+   - $\alpha \rightarrow \beta$ 是平凡函数依赖
+   - $\alpha$ 是超码
+6. 3NF: Each attribute A in $\beta - \alpha$ is contained in a candidate key for R.
+
+## 第十二章
+
+1. ACID Properties
+   - Atomicity（原子性） all in one.**全执行或全不执行**
+   - Consistency（一致性） Database is in consistent before and after a transaction is finished。**隔离执行事务时保持数据库的一致性**
+   - Isolation（隔离性）Although multiple transactions may execute concurrently, each transaction must be unaware of other concurrently executing transactions.**每个事务都察觉不到系统中有其他事务在并发执行**
+   - Durability（持久性）After a transaction completes successfully, the changes it has made to the database persist, even if there are system failures.**即使数据库故障，一个事务执行完毕后，他对数据库的修改是永久的**
+2. Transaction State
+   - Active（活跃） – the initial state; the transaction stays in this state while it is executing。初始状态，事务执行时处于这个状态
+   - Partially committed（部分提交） – after the final statement has been executed.
+   - Failed（失败） -- after the discovery that normal execution can no longer proceed.
+   - Aborted（放弃） – after the transaction has been rolled back and the database restored to its state prior to the start of the transaction.  Two options after it has been aborted:
+   - Committed（提交） – after successful completion.
+   - ![db2](../res/db2.png)
+
+3. Schedule（调度） – a sequences of instructions that specify the chronological order in which instructions of concurrent transactions are executed
+   - a schedule for a set of transactions must consist of all instructions of those transactions（完全调度）保持所有命令
+   - must preserve the order in which the instructions appear in each individual transaction.（维持事务内部指令的执行顺序）
+
+4. A (possibly concurrent) schedule is serializable if it is equivalent to a serial schedule
+   - conflict serializability（冲突可串行化）
+   - view serializability（视图可串行化）
+   - 除了读-读，其他都有冲突
+5. conflict serializable（冲突可串行化的）and recoverable and preferably cascadeless（可恢复的、无级联的）
+   - 无级联调度：不同事务之间，一个读操作发生在写操作后的话，那么写操作必须在读操作之前被提交
+6. 隔离级别
+   - Serializable（可串行化）default
+   - Repeatable read(可重复读)只允许读取已提交数据，同一事务中对同一数据读取之间，不允许其他事务修改
+   - Read committed（提交读）只允许读取已提交数据
+   - Read uncommitted（未提交读）允许读取未提交数据
+7. Lock-Based Protocols（基于锁的协议）
+   - shared (S) mode(共享)
+   - exclusive (X) mode(排他)
+
+   | | S | X |
+   | ---- | ---- | ---- |
+   | S | true  | false |
+   | X | false | false |
+
+8. The Two-Phase Locking Protocol（2阶段锁协议）
+   - Phase 1: Growing Phase(扩张阶段）事务只获得不释放
+     - transaction may obtain locks
+     - transaction may not release locks
+   - Phase 2: Shrinking Phase（收缩阶段）事务只释放不获得
+     - transaction may release locks
+     - transaction may not obtain locks
+9. Log-Based Recovery(基于日志的恢复)
+   - A  log is kept on stable storage. 
+   - The log is a sequence of log records, and maintains a record of update activities on the database.
+   - Immediate Database Modification 
+     - Recovery procedure has two operations instead of one: undo(Ti )，redo(Ti)
+     - Both operations must be idempotent（幂等）
+     - When recovering after failure:
+       - undo(Ti )  if the log contains \<Ti start\>, but not \<Ti commit\>.
+       - redo(Ti) if the log contains both \<Ti start\> and \<Ti commit\>.
+     - Undo operations are performed first, then redo operations.
+
+10. Streamline recovery procedure by periodically performing checkpointing
+    - Output all log records currently residing in main memory onto stable storage.日志输出到硬盘
+    - Output all modified buffer blocks to the disk.所有修改写入磁盘
+    - Write a log record \< checkpoint\> onto stable storage.写入\< checkpoint\>到硬盘
+    - 恢复时，只处理checkpoint或commit后的记录
