@@ -307,9 +307,9 @@
      - transaction may release locks
      - transaction may not obtain locks
 9. Log-Based Recovery(基于日志的恢复)
-   - A  log is kept on stable storage. 
+   - A  log is kept on stable storage.
    - The log is a sequence of log records, and maintains a record of update activities on the database.
-   - Immediate Database Modification 
+   - Immediate Database Modification
      - Recovery procedure has two operations instead of one: undo(Ti )，redo(Ti)
      - Both operations must be idempotent（幂等）
      - When recovering after failure:
