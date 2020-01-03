@@ -70,7 +70,7 @@
 4. sets D1, D2, …. Dn a **relation r** is a subset of D1 x  D2  x … x Dn
 5. The current values **(relation instance，关系实例)** of a relation are specified by a table
 6. K is a **superkey（超码）** of R if values for K are sufficient to identify a unique tuple of each possible relation r(R) 可以在关系中唯一标识一个元组
-7. K is a **candidate key（候选码）** if K is minimalPrimary key（主码）: chosen as the principal means of identifying tuples within a relation 最小化主码
+7. K is a **candidate key（候选码）** if K is minimal Primary key（主码）: chosen as the principal means of identifying tuples within a relation 最小化主码
 8. **Normalization theory (规范化理论)** deals with how to design “good” relational schemas
 9. 数据库模式：数据库逻辑设计
 10. 数据库实例：给定时刻数据库中数据的一个快照
